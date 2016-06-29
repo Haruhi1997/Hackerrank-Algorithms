@@ -1,0 +1,27 @@
+import java.util.*;
+import java.io.*;
+import java.util.Arrays;
+public class GOT {
+public static void main(String[] args){
+	Scanner sc=new Scanner(System.in);
+	
+	String s=sc.next();
+	char[] c=s.toCharArray();
+	Arrays.sort(c);
+	int[] cnt=new int[26];
+	for(char ca:c){
+		cnt[ca-'a']++;
+	}
+	int temp=0;
+	for(int e: cnt){
+		if(temp>1){
+			System.out.println("NO");return;}
+		else if(e%2!=0){
+			temp++;
+		}
+			
+	}
+	System.out.println("YES");
+	
+}
+}
