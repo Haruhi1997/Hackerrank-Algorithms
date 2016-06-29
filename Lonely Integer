@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+#include <assert.h>
+int lonelyinteger(int n, int* a) { int i;
+    int res = 0;
+    for(i = 0; i < n; i++){
+        res = res ^ a[i];
+    }
+return res;
+
+}
+int main() {
+    int res;
+    
+    int n, i,j=0;
+    scanf("%d", &n);
+    int a[n];
+    int cnt[n];
+    for(i = 0; i <n; i++) { 
+        scanf("%d", &a[i]);
+    }
+   //whiile(j<n){}
+    res = lonelyinteger(n, a); 
+    printf("%d", res);
+    
+    return 0;
+}
+
