@@ -1,0 +1,101 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+public class StockMaximize {
+	private static long[] getElements(String elements, int size) {
+
+		String[] elementsArray = elements.trim().split(" ");
+
+		if (elementsArray.length != size)
+			throw new IllegalArgumentException("Number of elements in the list does not match the size provided");
+
+		long[] numbers = new long[size];
+		int index = 0;
+
+		// extract integers
+		for (String ele : elementsArray) {
+			try {
+				numbers[index++] = Long.parseLong(ele);
+			} catch (NumberFormatException nfe) {
+				System.out.println("Caught NumberFormatException: Unable to parse to long");
+				nfe.getStackTrace();
+			}
+
+		}
+		return numbers;
+	}
+	private static boolean[] findSellingDays(long[] stockPrices, int days) {
+
+		boolean[] sellOn = new boolean[days]; // an array to keep track on days on which we can sell
+		Arrays.fill(sellOn, false); // fill with false
+
+		long localMax = Long.MIN_VALUE; // initialize the local max with minimum value possible
+
+		// traverse the array from back and if there mark selling days for local maximum
+		for (int i = days - 1; i >= 0; i--) {
+			if (localMax < stockPrices[i]) { // found better local maximum
+				localMax = stockPrices[i]; // update local maximum
+				sellOn[i] = true; // sell all existing shares on this day
+			}
+		}
+		return sellOn;
+	}
+	private static long calcMaxProfit(long[] stockPrices, int days) {
+
+		// pre-process the stock price array and find the days on which we should 
+		// sell the shares for maximum profit
+		boolean[] sellOn = findSellingDays(stockPrices, days);
+
+		long totalCost = 0, totalProfit = 0;
+		int numShares = 0;
+
+		// go through all the array containing stock prices and do the transaction
+		// if this is a buying day  i.e. sellOn[i] is false buy that share else if sellOn[i]
+		// if true and we have something to sell then sell it else just stay put
+		for (int i = 0; i < days; i++) {
+			if (sellOn[i] == false) { // buy shares
+				totalCost += stockPrices[i];
+				numShares++;
+			} else if (totalCost != 0) { // not a buying day and if we have something to sell then sell it
+				totalProfit += numShares * stockPrices[i] - totalCost; // calculate the profit
+				// we sold everything so reset these variables
+				totalCost = 0;
+				numShares = 0;
+			}
+		}
+		return totalProfit;
+	}
+
+	public static void main(String[] args) {
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+
+		try {
+			int testCases = Integer.parseInt(input.readLine().trim());
+
+			if (testCases <= 0) {
+				throw new IllegalArgumentException("The number of test cases must be greater than 0");
+			}
+
+			while (testCases > 0) {
+				int days = Integer.parseInt(input.readLine().trim());
+				if (days <= 0) {
+					throw new IllegalArgumentException("The number of test cases must be greater than 0");
+				}
+				long[] stockPrices = getElements(input.readLine(), days);
+
+				long maxProfit = calcMaxProfit(stockPrices, days);
+				System.out.println(maxProfit);
+				testCases--;
+			}
+			input.close();
+		} catch (NumberFormatException nfe) {
+			System.out.println("Caught NumberFormatException: Unable to parse inputs from stdin");
+			nfe.getStackTrace();
+		} catch (IOException ioe) {
+			System.out.println("Caught IOException: Unable to read inputs from stdin");
+			ioe.getStackTrace();
+		}
+	}
+}
